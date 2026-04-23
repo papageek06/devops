@@ -1,0 +1,49 @@
+services:
+  db:
+    image: mysql:9.3
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./sqlfiles:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: "mysql --user=$$mysql_user --password=$$MYSQL_ROOT_PASSWORD --execute \"SHOW DATABASES;\" || exit 1"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MYSQL_DATABASE: ynov_ci
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_HOST: db
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/docs', timeout=5)"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["NONE"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
