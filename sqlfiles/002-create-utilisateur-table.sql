@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ynov_ci.utilisateur (
+CREATE TABLE IF NOT EXISTS ynov_ci.utilisateurs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
