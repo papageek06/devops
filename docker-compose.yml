@@ -17,9 +17,7 @@ services:
       start_period: 30s
 
   db_mongo:
-    build:
-      context: ./mongo
-      dockerfile: Dockerfile
+    image: mongo:7.0
     restart: on-failure
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
@@ -27,6 +25,7 @@ services:
       MONGO_INITDB_DATABASE: blog_db
     volumes:
       - mongo_data:/data/db
+      - ./mongo/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "mongosh --quiet --username $$MONGO_INITDB_ROOT_USERNAME --password $$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin blog_db --eval \"if(db.posts.countDocuments({}) !== 5) quit(1)\" || exit 1"]
       interval: 10s
