@@ -1,7 +1,7 @@
 services:
 
   db_mysql:
-    image: mysql:9.3
+    image: mysql:8.4
     restart: on-failure
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -10,11 +10,11 @@ services:
       - mysql_data:/var/lib/mysql
       - ./sqlfiles:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD"]
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 30s
+  test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD || exit 1"]
+  interval: 10s
+  timeout: 10s
+  retries: 15  
+  start_period: 45s  
 
   db_mongo:
     image: mongo:7.0

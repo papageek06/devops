@@ -55,12 +55,13 @@ jobs:
 
       - name: Check containers health status
         run: |
-          TIMEOUT=180
+          TIMEOUT=240  # Increased from 180 to account for longer MySQL startup
           SERVICES="db_mysql db_mongo admin_mysql admin_mongo api"
-
+          
           echo "Waiting for containers to be healthy..."
           sleep $TIMEOUT
           docker compose ps
+         
 
           for SERVICE in $SERVICES; do
             STATUS=$(docker inspect $(docker compose ps -q $SERVICE) --format='{{.State.Health.Status}}')
