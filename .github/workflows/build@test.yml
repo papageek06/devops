@@ -15,9 +15,9 @@ jobs:
       - name: Set Up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Build image api for scanning
-        run: docker build -t my-apps:1.0.0 -f ./api/Dockerfile ./api
+        run: docker build --pull --no-cache -t my-apps:1.0.1 -f ./api/Dockerfile ./api
       - name: Build image mongo for scanning
-        run: docker build -t my-apps-mongo:1.0.0 -f ./Dockerfile .
+        run: docker build --pull --no-cache -t my-apps-mongo:1.0.1 -f ./Dockerfile .
       - name: Login to DockerHub
         uses: docker/login-action@v4
         with:
@@ -27,14 +27,14 @@ jobs:
         uses: docker/scout-action@v1
         with:
           command: cves,recommendations
-          image: my-apps:1.0.0
+          image: my-apps:1.0.1
           only-severity: critical,high
           exit-code: false
       - name: Docker Scout Scan Mongo
         uses: docker/scout-action@v1
         with:
           command: cves,recommendations
-          image: my-apps-mongo:1.0.0
+          image: my-apps-mongo:1.0.1
           only-severity: critical,high
           exit-code: false
 

@@ -87,7 +87,7 @@ services:
     ports:
       - "8000:8000"
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8000/posts && curl -sf http://localhost:8000/users || exit 1"]
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/posts').read(); urllib.request.urlopen('http://localhost:8000/users').read()\" || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
