@@ -1,43 +1,42 @@
-# Build and Test Application ,
-on: 
-  push :
-    branches : [main]
-  pull_request : 
+name: Build and Test Application
+
+on:
+  push:
+    branches: [main]
+  pull_request:
     branches: [main]
 
-jobs :
-  build_test :
-    runs-on : ubuntu-latest
-    steps :
-        - name : Checkout code
-          uses : actions/checkout@v4
-        - name : Set Up Docker Buildx
-          uses : docker/setup-buildx-action@v3
-        - name : build image api for scanning
-          run : docker build -t my-apps:1.0.0 -f ./api/Dockerfile .
-        - name : build image mongo for scanning
-          run : docker build -t my-apps-mongo:1.0.0 -f ./Dockerfile .
-        - name : Login to DockerHub
-          uses : docker/login-action@v4
-          with :
-            username : ${{ secrets.DOCKER_USERNAME }}
-            password : ${{ secrets.DOCKER_PASSWORD }}
-        - name : Docker Scout Scan api
-          uses : docker/scout-action@v1
-          with :
-            command : cves , recommendations
-            image : my-apps:1.0.0
-            files : ./api/Dockerfile
-            only-severity : critical,high
-            exit-code : false
-        - name : Docker Scout Scan Mongo
-          uses : docker/scout-action@v1
-          with :
-            command : cves,recommendations
-            image : my-apps-mongo:1.0.0
-            files : ./Dockerfile
-            only-severity : critical,high
-            exit-code : false
+jobs:
+  build_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set Up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build image api for scanning
+        run: docker build -t my-apps:1.0.0 -f ./api/Dockerfile ./api
+      - name: Build image mongo for scanning
+        run: docker build -t my-apps-mongo:1.0.0 -f ./Dockerfile .
+      - name: Login to DockerHub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker Scout Scan api
+        uses: docker/scout-action@v1
+        with:
+          command: cves,recommendations
+          image: my-apps:1.0.0
+          only-severity: critical,high
+          exit-code: false
+      - name: Docker Scout Scan Mongo
+        uses: docker/scout-action@v1
+        with:
+          command: cves,recommendations
+          image: my-apps-mongo:1.0.0
+          only-severity: critical,high
+          exit-code: false
 
   check_containers:
     runs-on: ubuntu-latest
@@ -57,7 +56,6 @@ jobs :
       - name: Check containers health status
         run: |
           TIMEOUT=180
-          ELAPSED=0
           SERVICES="db_mysql db_mongo admin_mysql admin_mongo api"
 
           echo "Waiting for containers to be healthy..."
@@ -70,4 +68,3 @@ jobs :
             [ "$STATUS" != "healthy" ] && echo "ERROR: $SERVICE is not healthy" && exit 1
           done
           echo "All containers are healthy!"
-
