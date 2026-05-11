@@ -23,8 +23,8 @@ jobs :
             username : ${{ secrets.DOCKER_USERNAME }}
             password : ${{ secrets.DOCKER_PASSWORD }}
     steps :
-        - name : Docker Scoot Scan api
-          uses : docker/scoot-scan-action@v1
+        - name : Docker Scout Scan api
+          uses : docker/scout-scan-action@v1
           with :
             command : cves , recommendations
             image : my-apps:1.0.0
@@ -32,11 +32,11 @@ jobs :
             only-severity : critical,high
             exit-code : true
     steps :
-        - name : Docker Scoot Scan Mongo
-          uses : docker/scoot-scan-action@v1
+        - name : Docker Scout Scan Mongo
+          uses : docker/scout-scan-action@v1
           with :
-            command : cves , recommendations
-            image : my-apps:1.0.0
+            command : cves,recommendations
+            image : my-apps-mongo:1.0.0
             files : ./Dockerfile
             only-severity : critical,high
             exit-code : true
