@@ -14,7 +14,7 @@ jobs :
         - name : Set Up Docker Buildx
           uses : docker/setup-buildx-action@v3
         - name : build image api for scanning
-          run : docker build -t my-apps:1.0.0 -f ./api/Dokerfile
+          run : docker build -t my-apps:1.0.0 -f ./api/Dokerfile .
         - name : build image mongo for scanning
-          run : docker build -t my-apps:1.0.0 -f ./Dokerfile
+          run : docker build -t my-apps-mongo:1.0.0 -f ./Dokerfile .
         
